@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Signifiya Registration</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Courier New', monospace;
+    }
+
+    body, html {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background: black;
+      color: #00ff00;
+    }
+
+    /* Matrix Animation */
+    canvas#matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: rgba(0, 0, 0, 0.9);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #00ff00;
+      box-shadow: 0 0 20px #00ff0044;
+    }
+
+    .navbar .logo {
+      font-size: 22px;
+      font-weight: bold;
+      color: #00ff00;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .navbar .nav-links a {
+      color: #00ff00;
+      text-decoration: none;
+      margin-left: 25px;
+      font-size: 15px;
+      transition: 0.3s ease;
+    }
+
+    .navbar .nav-links a:hover {
+      color: #fff;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .main-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 80px);
+    }
+
+    .form-container {
+      background: rgba(0, 0, 0, 0.85);
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 25px #00ff0066;
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .form-container h2 {
+      color: #00ff00;
+      text-shadow: 0 0 5px #00ff00;
+      margin-bottom: 20px;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid #00ff00;
+      animation: typing 2s steps(20), blink 0.8s step-end infinite alternate;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent }
+    }
+
+    .form-container input[type="text"] {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0 20px;
+      background-color: #000;
+      border: 1px solid #00ff0044;
+      border-radius: 8px;
+      color: #00ff00;
+      font-size: 15px;
+    }
+
+    .form-container input[type="text"]:focus {
+      outline: none;
+      border-color: #00ff00;
+      box-shadow: 0 0 8px #00ff00;
+    }
+
+    .form-container input[type="submit"] {
+      background: linear-gradient(to right, #00ff00, #007700);
+      color: black;
+      border: none;
+      padding: 14px;
+      width: 100%;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-container input[type="submit"]:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px #00ff00;
+    }
+
+    .view-link {
+      display: inline-block;
+      margin-top: 25px;
+      color: #00ff00;
+      text-decoration: none;
+      font-size: 14px;
+      text-shadow: 0 0 5px #00ff00;
+    }
+
+    .view-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="matrix"></canvas>
+
+  <div class="navbar">
+    <div class="logo">Signifiya </div>
+    <div class="nav-links">
+      <a href="/">Home</a>
+      <a href="/register">Register</a>
+      <a href="/display">Submissions</a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="form-container">
+      <h2>Register:Signifiya Form</h2>
+      <form action="/send" method="POST">
+        <input type="text" name="name" placeholder="Enter your name" required>
+        <input type="text" name="roll_no" placeholder="Enter your roll number" required>
+        <input type="text" name="reg_no" placeholder="Enter your registration number" required>
+        <input type="submit" value="EXECUTE">
+      </form>
+      <a class="view-link" href="/display">>> View Submitted Data</a>
+    </div>
+  </div>
+
+  <!-- Matrix Animation Script -->
+  <script>
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const chars = "01";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#00ff00";
+      ctx.font = fontSize + "px monospace";
+
+      drops.forEach((y, i) => {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        const x = i * fontSize;
+        ctx.fillText(text, x, y * fontSize);
+
+        if (y * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      });
+    }
+
+    setInterval(drawMatrix, 33);
+    window.addEventListener("resize", () => location.reload());
+  </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<html>
+<head>
+    <title>Student Management</title>
+</head>
+<body>
+
+{{#if status}}
+    <script>
+        const status = {{status}};
+        if (status == 1) {
+            alert("Data Updated Successfully!");
+        }
+        if (status == 2) {
+            alert("Data Deleted Successfully!");
+        }
+    </script>
+{{/if}}
+
+<table border="2px">
+    <tr>
+        <th>Name</th>
+        <th>Roll No</th>
+        <th>Reg No</th>
+        <th>Update</th>
+        <th>Delete</th>
+    </tr>
+    {{#each data}}
+    <form method="post" action="/update">
+        <tr>
+            <input type="hidden" name="id" value="{{this._id}}">
+            <td>
+                <input type="text" name="name" value="{{this.name}}">
+            </td>
+            <td>
+                <input type="text" name="roll_no" value="{{this.roll_no}}">
+            </td>
+            <td>
+                <input type="text" name="reg_no" value="{{this.reg_no}}">
+            </td>
+            <td>
+                <input type="submit" name="btn" value="UPDATE">
+            </td>
+            <td>
+                <input type="submit" name="btn" value="DELETE">
+            </td>
+        </tr>
+    </form>
+    {{/each}}
+</table>
+
+</body>
+</html>
