@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Signifiya Techfest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Courier New', monospace;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      background: black;
+      color: #00ff00;
+      overflow-x: hidden;
+    }
+
+    canvas#matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    .navbar {
+      background: rgba(0, 0, 0, 0.9);
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #00ff00;
+      box-shadow: 0 0 20px #00ff0044;
+    }
+
+    
+
+    .nav-links a {
+      color: #00ff00;
+      text-decoration: none;
+      margin-left: 25px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .hero-image-container {
+      position: relative;
+      height: 90vh;
+      overflow: hidden;
+      margin-bottom: 40px;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.6) contrast(1.1);
+    }
+
+    .hero-overlay-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #00ff00;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem;
+      text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00;
+      white-space: nowrap;
+      border-right: 4px solid #00ff00;
+      overflow: hidden;
+      width: 0;
+      animation: typing 6s steps(25, end) infinite, blink 1s step-end infinite;
+    }
+
+    @keyframes typing {
+      0% { width: 0; }
+      50% { width: 18ch; }
+      100% { width: 0; }
+    }
+
+    @keyframes blink {
+      0%, 100% { border-color: transparent; }
+      50% { border-color: #00ff00; }
+    }
+
+    section {
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 36px;
+      color: #00ff00;
+      text-shadow: 0 0 8px #00ff00;
+      margin-bottom: 30px;
+    }
+
+    p {
+      font-size: 16px;
+      max-width: 700px;
+      margin: 10px auto;
+    }
+
+    .swiper-container {
+      width: 90%;
+      padding-bottom: 50px;
+    }
+
+    .swiper-slide {
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid #00ff0044;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #00ff0033;
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .swiper-slide:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 30px #00ff0088;
+    }
+
+    .swiper-slide img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .swiper-slide .content {
+      padding: 15px;
+    }
+
+    .swiper-slide h2 {
+      color: #00ff00;
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+
+    .form-container {
+      display: none;
+      background: rgba(0, 0, 0, 0.85);
+      padding: 30px;
+      margin: 40px auto;
+      max-width: 400px;
+      border-radius: 12px;
+      box-shadow: 0 0 25px #00ff0066;
+      text-align: center;
+    }
+
+    .form-container.active {
+      display: block;
+    }
+
+    .form-container input[type="text"],
+    .form-container input[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    .form-container input[type="text"] {
+      background: #000;
+      border: 1px solid #00ff0044;
+      color: #00ff00;
+    }
+
+    .form-container input[type="submit"] {
+      background: linear-gradient(to right, #00ff00, #007700);
+      color: black;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+
+    .view-link {
+      color: #00ff00;
+      font-size: 14px;
+    }
+
+    footer {
+      background: rgba(0, 0, 0, 0.9);
+      padding: 20px;
+      border-top: 1px solid #00ff00;
+      text-align: center;
+    }
+   
+
+    /* Modal Styling */
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #000;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 0 20px #00ff00;
+      color: #00ff00;
+    }
+
+    .modal-content h2 {
+      margin-bottom: 15px;
+    }
+
+    .modal-content p {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .close-modal {
+      margin-top: 20px;
+      background: #00ff00;
+      color: black;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      border: none;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+      .hero-overlay-text {
+        font-size: 1.8rem;
+      }
+    }
+button[name="rbtn"] {
+  background: linear-gradient(135deg, #00cc66, #009944); 
+  border: none;
+  border-radius: 30px;
+  color: #ffffff; 
+  padding: 14px 36px;
+  font-size: 22px;
+  font-weight: 900; 
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(0, 255, 100, 0.5); 
+  transition: all 0.3s ease;
+  text-shadow: 0 0 2px #000, 0 0 4px rgba(0, 0, 0, 0.7);
+}
+
+button[name="rbtn"]:hover {
+  background: linear-gradient(135deg, #00e676, #00c853);
+  box-shadow: 0 0 10px rgba(0, 255, 100, 0.6);
+  transform: scale(1.05);
+}
+
+button[name="rbtn"]:active {
+  transform: scale(0.98);
+  box-shadow: 0 0 4px rgba(0, 255, 100, 0.4);
+}
+.faq-container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.faq-item {
+  border-bottom: 1px solid #00ff00;
+  padding: 15px 10px;
+}
+
+.faq-question {
+  cursor: pointer;
+  position: relative;
+  padding-right: 25px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #00ff00;
+}
+
+.faq-question::after {
+  content: '+';
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-weight: bold;
+  color: #00ff00;
+  font-size: 20px;
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  color: #00ff00;
+  font-size: 16px;
+  padding-left: 10px;
+  transition: max-height 0.4s ease-out;
+}
+
+.faq-item.open .faq-answer {
+  max-height: 200px; /* Adjust based on expected content height */
+  transition: max-height 0.4s ease-in;
+  margin-top: 10px;
+}
+
+.faq-item.open .faq-question::after {
+  content: '-';
+}
+.logo img{
+  width:60px;
+  height:35px;
+}
+.organiser-row {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 20px 0 40px;
+  flex-wrap: wrap;
+}
+
+.organiser-card {
+  text-align: center;
+  width: 120px;
+}
+
+.organiser-card img {
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 10px #00ff0044;
+  margin-bottom: 10px;
+  transition: transform 0.3s ease;
+}
+
+.organiser-card img:hover {
+  transform: scale(2.05);
+}
+
+.organiser-card p {
+  color: #00ff00;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+#organisers h3 {
+  font-size: 24px;
+  color: #00ff00;
+  margin-top: 40px;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+
+  <div class="navbar">
+    <div class="logo img"><img src="images/logo.jpg" alt="logo"></div>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#events">Events</a>
+      <a href="#organisers">Organisers</a>
+      <a href="#faq">FAQ</a>
+     <button name="rbtn"><a id="registerBtn">Register Now</a></button> 
+    </div>
+  </div>
+
+  <section class="hero" id="about">
+    <div class="hero-image-container">
+      <img src="images/hero.gif" class="hero-image" />
+      <div class="hero-overlay-text">Welcome to Signifiya 2025</div>
+    </div>
+    <p>
+     <h1> Signifiya is the annual techfest that brings together tech enthusiasts, innovators, and creators for an unforgettable experience.</h1>
+    </p>
+  </section>
+
+  <section id="events">
+    <h2>Featured Events</h2>
+    <div class="swiper-container">
+      <div class="swiper-wrapper" id="eventContainer">
+        <!-- Cards will be dynamically inserted -->
+      </div>
+    </div>
+  </section>
+
+ <section id="organisers">
+  <h2>Meet the Organisers</h2>
+
+  <!-- Faculty -->
+  <h3>Faculty</h3>
+  <div class="organiser-row">
+    <div class="organiser-card">
+      <img src="images/sud.jpg" alt="Ms. Soodipa Chakraborty">
+      <p>Ms. Soodipa Chakraborty</p>
+    </div>
+    <div class="organiser-card">
+      <img src="images/pra.jpg" alt="Mr.Prabhat Das">
+      <p>Mr.Prabhat Das</p>
+    </div>
+  </div>
+
+  <!-- Core Team -->
+  <h3>Core Team</h3>
+  <div class="organiser-row">
+    <div class="organiser-card">
+      <img src="images/alok.jpg" alt="Alokesh Biswas">
+      <p>Alokesh Biswas</p>
+    </div>
+    <div class="organiser-card">
+      <img src="images/sha.jpg" alt="Shanur Alam">
+      <p>Shanur Alam</p>
+    </div>
+  </div>
+
+  <!-- Organizing Team -->
+  <h3>Organizing Team</h3>
+  <div class="organiser-row">
+    <div class="organiser-card">
+      <img src="images/amr.jpg" alt="Amrita Sikder">
+      <p>Amrita Sikder</p>
+    </div>
+    <div class="organiser-card">
+      <img src="images/puja.jpg" alt="Puja Dey">
+      <p>Puja Dey</p>
+    </div>
+    <div class="organiser-card">
+      <img src="images/deba.jpg" alt="Debanjali singha Roy">
+      <p>Debanjali singha Roy</p>
+    </div>
+  </div>
+
+  <p><strong>Contact us:</strong> <a href="mailto:signifiya@techfest.com">signifiya@techfest.com</a></p>
+</section>
+
+
+
+  <div class="form-container" id="register">
+    <h2>Register for Signifiya</h2>
+    <form action="/send" method="POST">
+      <input type="text" name="name" placeholder="Enter your name" required>
+      <input type="text" name="roll_no" placeholder="Enter your roll number" required>
+      <input type="text" name="reg_no" placeholder="Enter your registration number" required>
+      <input type="text" name="event_info" placeholder="Enter the event which you wants to register" required>
+      <input type="submit" value="EXECUTE">
+    </form>
+    <a class="view-link" href="/display">&gt;&gt; View Submitted Data</a>
+  </div>
+<section id="faq">
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq-container">
+    <div class="faq-item">
+      <h3 class="faq-question">Who can participate in Signifiya?</h3>
+      <p class="faq-answer">Students from all branches and years can participate. Some events are also open to external participants.</p>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-question">Is there any registration fee?</h3>
+      <p class="faq-answer">No, participation in most events is completely free! However, some premium events may have a small fee.</p>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-question">How do I register for an event?</h3>
+      <p class="faq-answer">Click on the "Register Now" button, fill out the form, and submit. You'll receive a confirmation email shortly.</p>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-question">Can I register for multiple events?</h3>
+      <p class="faq-answer">Yes! You can register for as many events as you like, as long as the timings don't clash.</p>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-question">Where will the events take place?</h3>
+      <p class="faq-answer">All events will be conducted within the college campus. Exact venues will be announced soon.</p>
+    </div>
+  </div>
+</section>
+
+
+  <footer>
+    <p>&copy; 2025 Signifiya Techfest. All rights reserved.</p>
+    <p>Made with ❤ by the Tech Team</p>
+  </footer>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h2 id="modalTitle"></h2>
+      <p id="modalDesc"></p>
+      <button class="close-modal" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <script>
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const chars = "01";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#00ff00";
+      ctx.font = fontSize + "px monospace";
+      drops.forEach((y, i) => {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        const x = i * fontSize;
+        ctx.fillText(text, x, y * fontSize);
+        if (y * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      });
+    }
+
+    setInterval(drawMatrix, 33);
+    window.addEventListener("resize", () => location.reload());
+
+    document.getElementById("registerBtn").addEventListener("click", () => {
+      const form = document.getElementById("register");
+      form.classList.toggle("active");
+      form.scrollIntoView({ behavior: "smooth" });
+    });
+
+    // Event Data
+    const events = [
+      {
+        title: "Robotic Event",
+        img: "images/pic1.jpg",
+        desc: "Battle it out with bots in our robotics arena! Solve real-world problems using your robotic skills."
+      },
+      {
+        title: "Non-Tech Events",
+        img: "images/pic3.jpg",
+        desc: "Fun games, mystery rooms, and treasure hunts await! It’s all about brains, not just bytes."
+      },
+      {
+        title: "Mechanical Engineering Events",
+        img: "images/pic2.jpg",
+        desc: "Get your gears turning with CAD battles, machine design hackathons, and more."
+      },
+      {
+        title: "Civil Engineering Events",
+        img: "images/pic4.jpg",
+        desc: "From blueprint challenges to tower-building contests — this one’s for the builders!"
+      },
+      {
+        title: "Gaming Events",
+        img: "images/pic5.jpg",
+        desc: "Think fast, click faster. Join esports tournaments and arcade-style mini-games."
+      }
+    ];
+
+    const eventContainer = document.getElementById("eventContainer");
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDesc = document.getElementById("modalDesc");
+
+    function showModal(title, desc) {
+      modalTitle.innerText = title;
+      modalDesc.innerText = desc;
+      modal.classList.add("active");
+    }
+
+    function closeModal() {
+      modal.classList.remove("active");
+    }
+
+    events.forEach(event => {
+      const slide = document.createElement("div");
+      slide.className = "swiper-slide";
+      slide.innerHTML = `
+        <img src="${event.img}" />
+        <div class="content">
+          <h2>${event.title}</h2>
+          <p>Click to know more</p>
+        </div>
+      `;
+      slide.onclick = () => showModal(event.title, event.desc);
+      eventContainer.appendChild(slide);
+    });
+
+    const swiper = new Swiper('.swiper-container', {
+      loop: true,
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+      },
+      slidesPerView: 1,
+      spaceBetween: 20,
+      breakpoints: {
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 }
+      }
+    });
+     const faqItems = document.querySelectorAll('.faq-item');
+
+  faqItems.forEach(item => {
+    const question = item.querySelector('.faq-question');
+    question.addEventListener('click', () => {
+      item.classList.toggle('open');
+    });
+  });
+  </script>
+</body>
+</html>
